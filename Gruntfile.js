@@ -61,7 +61,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: ['src/angularJsonld.module.js', 'src/*/*.js'],
-                dest: 'dist/angularJsonld.js',
+                dest: 'dist/angular-jsonld.js',
             },
         },
 
