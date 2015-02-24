@@ -13,8 +13,13 @@
       });
     });
 
+    var restangularWithConfig = restangular.withConfig;
+
     return angular.extend(restangular, {
-      collection: collection
+      collection: collection,
+      withConfig: function(f){
+        return new JsonldRest($q, $log, $rootScope, restangularWithConfig(f), jsonld, jsonldContext);
+      }
     });
 
     function collection(route, context){

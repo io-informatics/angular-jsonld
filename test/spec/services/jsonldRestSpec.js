@@ -80,4 +80,13 @@ describe('jsonldRest', function() {
     $rootScope.$apply();
     $httpBackend.flush();
   });
+
+  it('should return a JsonldRest when call withConfig', function(){
+    var client = JsonldRest.withConfig(function(configurator){
+      configurator.setRestangularFields({
+        selfLink: '@id'
+      });
+    });
+    expect(client.collection).toBeDefined();
+  });
 });
