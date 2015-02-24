@@ -1,4 +1,11 @@
 'use strict';
+// Source: src/angularJsonld.module.js
+(function() {
+angular
+    .module('angularJsonld', ['restangular']);
+
+})();
+
 // Source: src/providers/jsonld.provider.js
 /* global jsonld */
 (function(jsonld) {

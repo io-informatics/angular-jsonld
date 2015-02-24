@@ -60,7 +60,7 @@ module.exports = function(grunt) {
                 }
             },
             dist: {
-                src: ['src/angularKite.module.js', 'src/*/*.js'],
+                src: ['src/angularJsonld.module.js', 'src/*/*.js'],
                 dest: 'dist/angularJsonld.js',
             },
         },
