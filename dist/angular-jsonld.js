@@ -19,7 +19,7 @@ angular
     var provider = this;
 
     provider.$get = function($log) {
-      var nodeDocumentLoader = jsonld.documentLoaders.xhr();
+      var nodeDocumentLoader = jsonld.documentLoaders.jquery();
 
       var customLoader = function(uri, callback) {
         if(uri in knownContexts) {
