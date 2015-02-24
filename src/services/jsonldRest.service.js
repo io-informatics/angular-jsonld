@@ -17,10 +17,29 @@
 
     return angular.extend(restangular, {
       collection: collection,
+      resource: resource,
       withConfig: function(f){
         return new JsonldRest($q, $log, $rootScope, restangularWithConfig(f), jsonld, jsonldContext);
       }
     });
+
+    function  resource(containerRoute, localRoute, context){
+      return restangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.extendModel(containerRoute, function(res){
+          var doGet = res.get;
+          return angular.extend(res, {
+            get: function() {
+              return doGet().then(function(data){
+                return compact(data, context);
+              }).then(restangularize);
+            },
+            withContext: function(c) {
+              return resource(containerRoute, localRoute, c);
+            }
+          });
+        });
+      }).one(containerRoute, localRoute);
+    }
 
     function collection(route, context){
       return restangular.withConfig(function(RestangularConfigurer){

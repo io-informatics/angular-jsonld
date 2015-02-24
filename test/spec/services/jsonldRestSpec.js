@@ -11,7 +11,8 @@ describe('jsonldRest', function() {
     '@context': 'http://www.w3.org/ns/hydra/context.jsonld',
     '@type': 'hydra:PagedCollection',
     'member': [],
-    'firstPage': 'http://example.org/collection?page=0'
+    'firstPage': 'http://example.org/collection?page=0',
+    '@id': 'http://example.org/thisColId'
   };
 
   // load the service's module
@@ -88,5 +89,19 @@ describe('jsonldRest', function() {
       });
     });
     expect(client.collection).toBeDefined();
+  });
+
+  it('should acccess resource', function(done){
+    $httpBackend.expectGET('/collection/res').respond(sampleHydraCollection, {'Content-Type': 'application/ld+json'});
+    JsonldRest.resource('collection', 'res').get().then(function(data){
+      expect(data['@id']).toEqual('http://example.org/thisColId');
+    }).
+    catch(function(err){
+      throw(err);
+    }).
+    finally(done);
+
+    $rootScope.$apply();
+    $httpBackend.flush();
   });
 });
