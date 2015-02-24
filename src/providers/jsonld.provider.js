@@ -11,7 +11,7 @@
     var provider = this;
 
     provider.$get = function($log) {
-      var nodeDocumentLoader = jsonld.documentLoaders.jquery($);
+      var nodeDocumentLoader = jsonld.documentLoaders.xhr();
 
       var customLoader = function(uri, callback) {
         if(uri in knownContexts) {
@@ -23,7 +23,12 @@
               documentUrl: uri // this is the actual context URL after redirects
             });
         }
-        nodeDocumentLoader(uri, callback);
+        nodeDocumentLoader(uri).then(function(response){
+          callback(null, response);
+        }).
+        catch(function(err){
+          callback(err, null);
+        });
       };
       jsonld.documentLoader = customLoader;
       return jsonld;
