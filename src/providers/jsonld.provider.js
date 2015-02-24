@@ -11,7 +11,7 @@
     var provider = this;
 
     provider.$get = function($log) {
-      var nodeDocumentLoader = jsonld.documentLoaders.jquery();
+      var nodeDocumentLoader = jsonld.documentLoaders.jquery($);
 
       var customLoader = function(uri, callback) {
         if(uri in knownContexts) {
