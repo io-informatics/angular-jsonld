@@ -3,10 +3,10 @@
   'use strict';
   angular
     .module('angularJsonld')
-    .provider('jsonld', Jsonld);
+    .provider('jsonld', JsonldProvider);
 
   /* @ngInject */
-  function Jsonld() {
+  function JsonldProvider() {
     var knownContexts = {};
     var provider = this;
 
