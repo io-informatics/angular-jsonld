@@ -60,6 +60,7 @@ angular
     .module('angularJsonld')
     .provider('jsonldContext', JsonldContextProvider);
 
+  /* @ngInject */
   function JsonldContextProvider(){
     var provider = this;
     var context = {};
