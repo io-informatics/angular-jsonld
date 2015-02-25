@@ -10,6 +10,7 @@
     var knownContexts = {};
     var provider = this;
 
+    /* @ngInject */
     provider.$get = function($log) {
       var nodeDocumentLoader = jsonld.documentLoaders.xhr();
 
