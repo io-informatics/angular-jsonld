@@ -66,7 +66,7 @@
           });
         }
         for(var field in node) {
-          if(node.hasOwnProperty(field) && typeof(node[field]) === 'object'){
+          if(node.hasOwnProperty(field) && field !== '@context' && typeof(node[field]) === 'object'){
             node[field] = restangularize(node[field], node);
           }
         }
