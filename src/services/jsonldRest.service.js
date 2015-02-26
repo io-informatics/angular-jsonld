@@ -53,6 +53,9 @@
             },
             withContext: function(c) {
               return collection(route, c);
+            },
+            one: function(elementRoute){
+              return resource(route, elementRoute, context);
             }
           });
         });
