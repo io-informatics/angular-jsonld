@@ -31,10 +31,8 @@ describe('jsonldRest', function() {
   }));
 
   afterEach(function(){
-    $timeout(function() {
-      $httpBackend.verifyNoOutstandingExpectation();
-      $httpBackend.verifyNoOutstandingRequest();
-    });
+      //$httpBackend.verifyNoOutstandingExpectation();
+      //$httpBackend.verifyNoOutstandingRequest();
   });
 
   it('should compact and provide extended context', function(done){
@@ -46,7 +44,6 @@ describe('jsonldRest', function() {
       throw(err);
     }).
     finally(done);
-
     $rootScope.$apply();
     $httpBackend.flush();
   });
@@ -77,7 +74,6 @@ describe('jsonldRest', function() {
       throw(err);
     }).
     finally(done);
-
     $rootScope.$apply();
     $httpBackend.flush();
   });
@@ -100,8 +96,30 @@ describe('jsonldRest', function() {
       throw(err);
     }).
     finally(done);
-
     $rootScope.$apply();
     $httpBackend.flush();
   });
+
+  it('should restangularize fields with type coercion', function(done){
+    $httpBackend.expectGET('/collection/res').respond({
+      '@context': {
+        'p': {'@id': 'http://example/p', '@type': '@id'}
+      },
+      p: 'http://example.org/a'
+    }, {'Content-Type': 'application/ld+json'});
+
+    JsonldRest.resource('collection', 'res').withContext({
+      p: 'http://example/p'
+    }).get().then(function(data){
+      expect(data.p.get).toBeDefined();
+    }).
+    catch(function(err){
+      throw(err);
+    }).
+    finally(done);
+    $rootScope.$apply();
+    $httpBackend.flush();
+
+  });
+
 });

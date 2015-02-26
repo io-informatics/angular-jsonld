@@ -73,6 +73,15 @@
             node[field] = restangularize(node[field], node);
           }
         }
+        if(node['@context']){
+          var context = node['@context'];
+          for(var prop in context){
+            if(context.hasOwnProperty(prop) && context[prop]['@type'] === '@id'){
+              node[prop] = restangularize({'@id':node[prop]}, node);
+            }
+          }
+        }
+
         if(node['@id']) {
           var link = restangular.restangularizeElement(parent, node, node['@id']);
           $log.info('Created Restangular subresource: ', link);
