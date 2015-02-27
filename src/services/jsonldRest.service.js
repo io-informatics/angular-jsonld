@@ -77,7 +77,9 @@
           var context = node['@context'];
           for(var prop in context){
             if(context.hasOwnProperty(prop) && context[prop]['@type'] === '@id'){
-              node[prop] = restangularize({'@id':node[prop]}, node);
+              if(node[prop] !== undefined){
+                node[prop] = restangularize({'@id':node[prop]}, node);
+              }
             }
           }
         }
