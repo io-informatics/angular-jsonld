@@ -156,7 +156,7 @@ angular
         if(node['@context']){
           var context = node['@context'];
           for(var prop in context){
-            if(context.hasOwnProperty(prop) && context[prop]['@type'] === '@id'){
+            if(context.hasOwnProperty(prop) && isTypeCoercionProperty(context, prop, node)){
               node[prop] = restangularize({'@id':node[prop]}, node);
             }
           }
@@ -187,13 +187,17 @@ angular
           $log.debug('Completed jsonld compact processing', compacted);
           compactDefer.resolve(compacted);
         }
-        //$rootScope.$digest();
+        $rootScope.$apply();
       });
       return compactDefer.promise;
     }
 
     function isJsonld(response) {
       return response.headers('Content-Type') === 'application/ld+json';
+    }
+
+    function isTypeCoercionProperty(context, prop, node){
+      return context[prop]['@type'] === '@id' && node[prop] !== undefined;
     }
   }
 
