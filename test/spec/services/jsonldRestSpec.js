@@ -96,8 +96,9 @@ describe('jsonldRest', function() {
       throw(err);
     }).
     finally(done);
-    $rootScope.$apply();
+
     $httpBackend.flush();
+    $rootScope.$apply();
   });
 
   it('should restangularize fields with type coercion', function(done){
@@ -120,6 +121,14 @@ describe('jsonldRest', function() {
     $rootScope.$apply();
     $httpBackend.flush();
 
+  });
+
+  it('should allow passing query parameters when getting a collection', function(){
+    $httpBackend.expectGET('/collection?p1=a').respond({}, {'Content-Type': 'application/ld+json'});
+    JsonldRest.collection('collection').get({p1:'a'});
+
+    $rootScope.$apply();
+    $httpBackend.flush();
   });
 
 });

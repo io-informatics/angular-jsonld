@@ -126,8 +126,8 @@ angular
         RestangularConfigurer.extendCollection(route, function(col){
           var doGet = col.get;
           return angular.extend(col, {
-            get: function() {
-              return doGet('').then(function(data){
+            get: function(params) {
+              return doGet('',params).then(function(data){
                 return compact(data, context);
               }).then(restangularize);
             },
@@ -153,6 +153,15 @@ angular
             node[field] = restangularize(node[field], node);
           }
         }
+        if(node['@context']){
+          var context = node['@context'];
+          for(var prop in context){
+            if(context.hasOwnProperty(prop) && context[prop]['@type'] === '@id'){
+              node[prop] = restangularize({'@id':node[prop]}, node);
+            }
+          }
+        }
+
         if(node['@id']) {
           var link = restangular.restangularizeElement(parent, node, node['@id']);
           $log.info('Created Restangular subresource: ', link);
@@ -178,7 +187,7 @@ angular
           $log.debug('Completed jsonld compact processing', compacted);
           compactDefer.resolve(compacted);
         }
-        $rootScope.$apply();
+        //$rootScope.$digest();
       });
       return compactDefer.promise;
     }

@@ -46,8 +46,8 @@
         RestangularConfigurer.extendCollection(route, function(col){
           var doGet = col.get;
           return angular.extend(col, {
-            get: function() {
-              return doGet('').then(function(data){
+            get: function(params) {
+              return doGet('',params).then(function(data){
                 return compact(data, context);
               }).then(restangularize);
             },
@@ -107,7 +107,7 @@
           $log.debug('Completed jsonld compact processing', compacted);
           compactDefer.resolve(compacted);
         }
-        $rootScope.$apply();
+        //$rootScope.$digest();
       });
       return compactDefer.promise;
     }
