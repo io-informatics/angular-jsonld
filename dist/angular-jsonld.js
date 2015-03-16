@@ -104,42 +104,26 @@ angular
     });
 
     function  resource(containerRoute, localRoute, context){
-      return restangular.withConfig(function(RestangularConfigurer){
-        RestangularConfigurer.extendModel(containerRoute, function(res){
-          var doGet = res.get;
-          return angular.extend(res, {
-            get: function() {
-              return doGet().then(function(data){
-                return compact(data, context);
-              }).then(restangularize);
-            },
-            withContext: function(c) {
-              return resource(containerRoute, localRoute, c);
-            }
-          });
-        });
-      }).one(containerRoute, localRoute);
+      var r = restangular.one(containerRoute, localRoute);
+      return angular.extend(r, {
+        get: jsonldGet(r, context),
+        withContext: function(c) {
+          return resource(containerRoute, localRoute, c);
+        }
+      });
     }
 
     function collection(route, context){
-      return restangular.withConfig(function(RestangularConfigurer){
-        RestangularConfigurer.extendCollection(route, function(col){
-          var doGet = col.get;
-          return angular.extend(col, {
-            get: function(params) {
-              return doGet('',params).then(function(data){
-                return compact(data, context);
-              }).then(restangularize);
-            },
-            withContext: function(c) {
-              return collection(route, c);
-            },
-            one: function(elementRoute){
-              return resource(route, elementRoute, context);
-            }
-          });
-        });
-      }).all(route);
+      var col = restangular.all(route);
+      return angular.extend(col,{
+        withContext: function(c) {
+          return collection(route, c);
+        },
+        one: function(elementRoute){
+          return resource(route, elementRoute, context);
+        },
+        get: jsonldGet(col, context)
+      });
     }
 
     function restangularize(node, parent){
@@ -170,6 +154,23 @@ angular
         else {
           return node;
         }
+    }
+
+    function jsonldGet(obj, context){
+      if(angular.isFunction(obj.get)){
+        var doGet = obj.get;
+        return function(params) {
+          return doGet('',params).then(function(data){
+            return compact(data, context);
+          }).then(function(compacted){
+            var r = restangularize(compacted);
+            return angular.extend(r,{
+              get: jsonldGet(r, context)
+            });
+          });
+        };
+      }
+      return undefined;
     }
 
     function compact(data, context){
