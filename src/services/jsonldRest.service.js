@@ -9,10 +9,11 @@
   function JsonldRest($q, $log, $rootScope, Restangular, jsonld, jsonldContext) {
     var restangular =  Restangular.withConfig(function(RestangularConfigurer){
       RestangularConfigurer.setRestangularFields({
-        selfLink: '@id'
+        selfLink: '@id',
+        get: '_get'
       });
     });
-    
+
     var restangularWithConfig = restangular.withConfig;
 
     return angular.extend(restangular, {
@@ -69,7 +70,9 @@
         if(node['@id']) {
           var link = restangular.restangularizeElement(parent, node, node['@id']);
           $log.info('Created Restangular subresource: ', link);
-          return link;
+          return angular.extend(link, {
+            get: jsonldGet(link)
+          });
         }
         else {
           return node;
@@ -77,16 +80,13 @@
     }
 
     function jsonldGet(obj, context){
-      if(angular.isFunction(obj.get)){
-        var doGet = obj.get;
+      if(angular.isFunction(obj._get)){
+        var doGet = obj._get;
         return function(params) {
           return doGet('',params).then(function(data){
             return compact(data, context);
           }).then(function(compacted){
-            var r = restangularize(compacted);
-            return angular.extend(r,{
-              get: jsonldGet(r, context)
-            });
+            return restangularize(compacted);
           });
         };
       }
