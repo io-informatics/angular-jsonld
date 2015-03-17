@@ -87,27 +87,41 @@ angular
 
   /* @ngInject */
   function JsonldRest($q, $log, $rootScope, Restangular, jsonld, jsonldContext) {
-    var restangular =  Restangular.withConfig(function(RestangularConfigurer){
-      RestangularConfigurer.setRestangularFields({
-        selfLink: '@id',
-        get: '_get'
+    function JsonldRestangular(context) {
+      var configuredRestangular = Restangular.withConfig(function(RestangularConfigurer){
+        RestangularConfigurer.setRestangularFields({
+          selfLink: '@id',
+          get: '_get'
+        });
+        RestangularConfigurer.setOnElemRestangularized(function(elem, isCollection, what, Restangular){
+          return angular.extend(elem,{
+            get: jsonldGet(elem, context)
+          });
+        });
       });
-    });
 
-    var restangularWithConfig = restangular.withConfig;
+      var withConfigFn = configuredRestangular.withConfig;
 
-    return angular.extend(restangular, {
-      collection: collection,
-      resource: resource,
-      withConfig: function(f){
-        return new JsonldRest($q, $log, $rootScope, restangularWithConfig(f), jsonld, jsonldContext);
-      }
-    });
+      return angular.extend(configuredRestangular, {
+        collection: collection,
+        resource: resource,
+        withConfig: function(f){
+          return new JsonldRest($q, $log, $rootScope, withConfigFn(f), jsonld, jsonldContext);
+        },
+        withContext: function(c) {
+          return new JsonldRestangular(c);
+        }
+      });
+    }
+
+    var restangular = new JsonldRestangular();
+
+    return restangular;
 
     function  resource(containerRoute, localRoute, context){
-      var r = restangular.one(containerRoute, localRoute);
+      var ra = context? restangular.withContext(context): restangular;
+      var r = ra.one(containerRoute, localRoute);
       return angular.extend(r, {
-        get: jsonldGet(r, context),
         withContext: function(c) {
           return resource(containerRoute, localRoute, c);
         }
@@ -115,15 +129,15 @@ angular
     }
 
     function collection(route, context){
-      var col = restangular.all(route);
+      var ra = context? restangular.withContext(context): restangular;
+      var col = ra.all(route);
       return angular.extend(col,{
         withContext: function(c) {
           return collection(route, c);
         },
         one: function(elementRoute){
           return resource(route, elementRoute, context);
-        },
-        get: jsonldGet(col, context)
+        }
       });
     }
 
