@@ -131,4 +131,18 @@ describe('jsonldRest', function() {
     $httpBackend.flush();
   });
 
+  it('should return resources with modified get', function(done){
+    $httpBackend.expectGET('/collection/123').respond(sampleHydraCollection, {'Content-Type': 'application/ld+json'});
+    var resource = JsonldRest.resource('collection', '123');
+    resource.get().then(function(res){
+      expect(res['hydra:firstPage']).toBeDefined();
+    }).
+    catch(function(err){
+      throw(err);
+    }).
+    finally(done);
+    $rootScope.$apply();
+    $httpBackend.flush();
+  });
+
 });

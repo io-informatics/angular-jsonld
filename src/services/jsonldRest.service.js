@@ -12,7 +12,7 @@
         selfLink: '@id'
       });
     });
-
+    
     var restangularWithConfig = restangular.withConfig;
 
     return angular.extend(restangular, {
