@@ -95,7 +95,7 @@ angular
         });
         RestangularConfigurer.setOnElemRestangularized(function(elem, isCollection, what, Restangular){
           return angular.extend(elem,{
-            get: jsonldGet(elem, context)
+            get: jsonldGet(elem, context, isCollection)
           });
         });
       });
@@ -173,11 +173,16 @@ angular
         }
     }
 
-    function jsonldGet(obj, context){
+    function jsonldGet(obj, context, isCollection){
       if(angular.isFunction(obj._get)){
-        var doGet = obj._get;
+        var doGet = function(params){
+          if(isCollection) {
+            return obj._get('', params);
+          }
+          return obj._get(params);
+        };
         return function(params) {
-          return doGet('',params).then(function(data){
+          return doGet(params).then(function(data){
             return compact(data, context);
           }).then(function(compacted){
             return restangularize(compacted);
