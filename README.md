@@ -69,7 +69,7 @@ app.controller('HelloCtrl', function(JsonldRest){
     "fullName": "schema:name" /* My client calls 'fullName' the http://schema.org/name property*/ property */
   });
 
-  /* We retrieve one person */
+  /* We retrieve the person http://example.org/person/1 */
   people.one('1').get().then(function(res){
     console.log("Hello ", res.fullName);
   });
@@ -98,7 +98,7 @@ app.controller('HelloCtrl', function(JsonldRest){
   /* A handler to a server collection of persons with a local context interpretation */
   var people = JsonldRest.collection('/person');
 
-  /* We retrieve one person */
+  /* We retrieve the person http://example.org/person/1 */
   people.one('1').get().then(function(res){
     console.log("Hello ", res.fullName);
   });
@@ -149,7 +149,7 @@ app.controller('HelloCtrl', function(JsonldRest){
   /* A handler to a server collection of persons with a local context interpretation */
   var people = JsonldRest.collection('/person');
 
-  /* We retrieve one person */
+  /* We retrieve the person http://example.org/person/1 */
   people.one('1').get().then(function(res){
     console.log(res.fullName+' is friend with: ');
     res.friends.forEach(function(friendLink){
