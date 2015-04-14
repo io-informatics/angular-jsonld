@@ -130,15 +130,33 @@ angular
 
     function collection(route, context){
       var ra = context? restangular.withContext(context): restangular;
+
       var col = ra.all(route);
+
       return angular.extend(col,{
         withContext: function(c) {
           return collection(route, c);
         },
         one: function(elementRoute){
           return resource(route, elementRoute, context);
+        },
+        getList: function(){
+          var members = arguments.length > 0? arguments[0] : '@graph';
+          var args = arguments.length > 1? Array.prototype.slice.apply(arguments, [1]) : undefined;
+          return col.get.apply(col, args).then(function(res){
+            return angular.extend(asArray(res[members]), res);
+          });
         }
       });
+    }
+
+    function asArray(obj){
+      if(obj instanceof Array) {
+        return obj;
+      }
+      else {
+        return [obj];
+      }
     }
 
     function restangularize(node, parent){

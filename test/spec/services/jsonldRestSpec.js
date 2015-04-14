@@ -10,7 +10,10 @@ describe('jsonldRest', function() {
   var sampleHydraCollection = {
     '@context': 'http://www.w3.org/ns/hydra/context.jsonld',
     '@type': 'hydra:PagedCollection',
-    'member': [],
+    'member': [
+        {'@id':'/sites/1','@type':'Site','lang':'es'},
+        {'@id':'/sites/2','@type':'Site','lang':'en'}
+    ],
     'firstPage': 'http://example.org/collection?page=0',
     '@id': 'http://example.org/thisColId'
   };
@@ -136,6 +139,36 @@ describe('jsonldRest', function() {
     var resource = JsonldRest.resource('collection', '123');
     resource.get().then(function(res){
       expect(res['hydra:firstPage']).toBeDefined();
+    }).
+    catch(function(err){
+      throw(err);
+    }).
+    finally(done);
+    $rootScope.$apply();
+    $httpBackend.flush();
+  });
+
+  it('getList(member) should return an array of jsonld objects', function(done){
+    $httpBackend.expectGET('/collection').respond(sampleHydraCollection, {'Content-Type': 'application/ld+json'});
+    var col = JsonldRest.collection('collection');
+    col.getList('hydra:member').then(function(res){
+      expect(res.length).toBe(2);
+      expect(res[0]['@id']).toBe('/sites/1');
+      expect(res['hydra:firstPage']).toBeDefined();
+    }).
+    catch(function(err){
+      throw(err);
+    }).
+    finally(done);
+    $rootScope.$apply();
+    $httpBackend.flush();
+  });
+
+  it('getList(member) should support request arguments', function(done){
+    $httpBackend.expectGET('/collection?q=hello').respond(sampleHydraCollection, {'Content-Type': 'application/ld+json'});
+    var col = JsonldRest.collection('collection');
+    col.getList('hydra:member', {q: 'hello'}).then(function(res){
+      expect(res.length).toBe(2);
     }).
     catch(function(err){
       throw(err);
