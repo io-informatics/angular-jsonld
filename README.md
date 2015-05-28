@@ -1,4 +1,4 @@
-# angular-jsonld
+# angular-jsonld [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/io-informatics/angular-jsonld?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 This angular module facilitates the integration of [JSON-LD](http://json-ld.org) server APIs in AngularJS clients. It is implemented on top of [Restagular](https://github.com/mgonto/restangular). Its purpose is to provide an adapter layer to map client's data model to the server's API model by using the semantics embedded in JSON-LD as the contract interface. Another important
 functionality of *angular-jsonld* is to enable easy navigation of JSON-LD hyperlinks in client's code. We further explain the meaning of these two feature bellow.
 
